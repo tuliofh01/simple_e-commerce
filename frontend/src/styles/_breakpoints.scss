@@ -1,0 +1,79 @@
+// Breakpoint system for responsive design
+$breakpoints: (
+  xs: 0,          // Extra small phones
+  sm: 576px,      // Small phones
+  md: 768px,      // Tablets
+  lg: 992px,      // Small desktops
+  xl: 1200px,     // Desktops
+  xxl: 1400px     // Large desktops
+);
+
+// Mobile-first media query mixins
+@mixin respond-to($breakpoint) {
+  @if map-has-key($breakpoints, $breakpoint) {
+    @media (min-width: map-get($breakpoints, $breakpoint)) {
+      @content;
+    }
+  } @else {
+    @warn "Unfortunately, no value could be retrieved from `#{$breakpoint}`. "
+        + "Available breakpoints are: #{map-keys($breakpoints)}.";
+  }
+}
+
+// Range media queries
+@mixin respond-between($lower, $upper) {
+  @if map-has-key($breakpoints, $lower) and map-has-key($breakpoints, $upper) {
+    @media (min-width: map-get($breakpoints, $lower)) and (max-width: map-get($breakpoints, $upper) - 1px) {
+      @content;
+    }
+  }
+}
+
+// Container system
+@mixin container($max-width: null) {
+  width: 100%;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 1rem;
+  padding-right: 1rem;
+  
+  @if $max-width {
+    max-width: $max-width;
+  }
+  
+  @include respond-to(sm) {
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+  }
+  
+  @include respond-to(lg) {
+    padding-left: 2rem;
+    padding-right: 2rem;
+  }
+}
+
+// Hide on specific breakpoints
+@mixin hide-on($breakpoint) {
+  @include respond-to($breakpoint) {
+    display: none !important;
+  }
+}
+
+// Show only on specific breakpoints
+@mixin show-only-on($breakpoint) {
+  display: none !important;
+  
+  @include respond-to($breakpoint) {
+    display: block !important;
+  }
+  
+  @if $breakpoint != xs {
+    $next-breakpoint-index: map-get-keys($breakpoints).index($breakpoint) + 1;
+    @if $next-breakpoint-index <= length(map-keys($breakpoints)) {
+      $next-breakpoint: nth(map-keys($breakpoints), $next-breakpoint-index);
+      @include respond-to($next-breakpoint) {
+        display: none !important;
+      }
+    }
+  }
+}

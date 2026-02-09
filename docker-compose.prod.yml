@@ -1,0 +1,75 @@
+version: '3.8'
+
+services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    volumes:
+      - backend_data:/app/data
+      - backend_uploads:/app/uploads
+    environment:
+      - NODE_ENV=production
+    secrets:
+      - jwt_secret
+      - stripe_secret
+      - smtp_password
+    deploy:
+      replicas: 2
+      resources:
+        limits:
+          memory: 512M
+        reservations:
+          memory: 256M
+    networks:
+      - app-network
+    restart: unless-stopped
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - "80:80"
+    volumes:
+      - ./ssl:/etc/nginx/ssl
+    environment:
+      - NODE_ENV=production
+    depends_on:
+      - backend
+    networks:
+      - app-network
+    restart: unless-stopped
+
+  nginx:
+    image: nginx:alpine
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+      - ./ssl:/etc/nginx/ssl
+    depends_on:
+      - frontend
+      - backend
+    networks:
+      - app-network
+    restart: unless-stopped
+
+volumes:
+  backend_data:
+  backend_uploads:
+
+secrets:
+  jwt_secret:
+    file: ./secrets/jwt_secret.txt
+  stripe_secret:
+    file: ./secrets/stripe_secret.txt
+  smtp_password:
+    file: ./secrets/smtp_password.txt
+
+networks:
+  app-network:
+    driver: bridge

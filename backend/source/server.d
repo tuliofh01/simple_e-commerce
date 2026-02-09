@@ -1,0 +1,125 @@
+module source.server;
+
+import vibe.d;
+import controllers.product_controller;
+import controllers.auth_controller;
+import middleware.cors_middleware;
+import middleware.auth_middleware;
+import crypto.jwt_handler;
+import config.app_config;
+import std.stdio;
+import std.typecons;
+
+/**
+ * Main server application
+ * Initializes all components and starts the web server
+ */
+void main() {
+    writeln("🚀 Starting Simple E-Commerce Backend Server...");
+    
+    try {
+        // Load configuration
+        auto config = ConfigManager.load();
+        
+        // Validate configuration
+        if (!ConfigManager.validateConfig(config)) {
+            writeln("❌ Invalid configuration. Please check your .env file.");
+            return;
+        }
+        
+        // Initialize JWT handler
+        auto jwtHandler = new JWTHandler(config.jwtSecret);
+        
+        // Initialize middleware
+        auto authMiddleware = new AuthMiddleware(jwtHandler);
+        
+        // Setup HTTP server
+        auto settings = new HTTPServerSettings;
+        settings.port = config.serverPort;
+        settings.bindAddresses = ["127.0.0.1"];
+        
+        // Create URL router
+        auto router = new URLRouter;
+        
+        // Add CORS middleware to all routes
+        router.registerMiddleware(&addCorsHeaders);
+        
+        // Initialize controllers
+        auto productController = new ProductController();
+        auto authController = new AuthController();
+        
+        // Health check endpoint
+        router.get("/api/health", (HTTPServerRequest req, HTTPServerResponse res) {
+            auto response = [
+                "status": "healthy",
+                "timestamp": Clock.currTime().toISOExtString(),
+                "version": "1.0.0",
+                "environment": "development"
+            ].toJSON();
+            
+            res.headers["Content-Type"] = "application/json";
+            res.writeBody(response.toString());
+        });
+        
+        // Authentication routes
+        router.post("/api/auth/register", &authController.register);
+        router.post("/api/auth/login", &authController.login);
+        router.post("/api/auth/refresh", &authController.refreshToken);
+        router.get("/api/auth/profile", (HTTPServerRequest req, HTTPServerResponse res) {
+            if (authMiddleware.requireAuth(req, res)) {
+                authController.getProfile(req, res);
+            }
+        });
+        router.put("/api/auth/profile", (HTTPServerRequest req, HTTPServerResponse res) {
+            if (authMiddleware.requireAuth(req, res)) {
+                authController.updateProfile(req, res);
+            }
+        });
+        router.post("/api/auth/change-password", (HTTPServerRequest req, HTTPServerResponse res) {
+            if (authMiddleware.requireAuth(req, res)) {
+                authController.changePassword(req, res);
+            }
+        });
+        router.post("/api/auth/logout", &authController.logout);
+        
+        // Product routes
+        router.get("/api/products", &productController.getProducts);
+        router.get("/api/products/featured", &productController.getFeaturedProducts);
+        router.get("/api/products/search", &productController.searchProducts);
+        router.get("/api/products/category/:category", &productController.getProductsByCategory);
+        router.get("/api/products/slug/:slug", &productController.getProductBySlug);
+        router.get("/api/products/:id", &productController.getProduct);
+        
+        // Protected product routes (require authentication)
+        router.post("/api/products", (HTTPServerRequest req, HTTPServerResponse res) {
+            if (authMiddleware.requireModerator(req, res)) {
+                productController.createProduct(req, res);
+            }
+        });
+        router.put("/api/products/:id", (HTTPServerRequest req, HTTPServerResponse res) {
+            if (authMiddleware.requireModerator(req, res)) {
+                productController.updateProduct(req, res);
+            }
+        });
+        router.delete("/api/products/:id", (HTTPServerRequest req, HTTPServerResponse res) {
+            if (authMiddleware.requireAdmin(req, res)) {
+                productController.deleteProduct(req, res);
+            }
+        });
+        
+        // Start the server
+        writeln("✅ Server initialized successfully");
+        writeln("🌐 Server running on http://localhost:", settings.port);
+        writeln("📊 Health check: http://localhost:", settings.port, "/api/health");
+        writeln("🔧 API Documentation: http://localhost:", settings.port, "/api/docs");
+        writeln("⏰ Started at: ", Clock.currTime().toISOExtString());
+        writeln("🎯 Press Ctrl+C to stop the server");
+        writeln();
+        
+        listenHTTP(settings, router);
+        
+    } catch (Exception e) {
+        writeln("❌ Failed to start server: ", e.msg);
+        writeln("📍 Stack trace: ", e.info);
+    }
+}

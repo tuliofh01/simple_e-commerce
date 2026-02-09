@@ -1,0 +1,155 @@
+// Angular Material theme customization
+@use '@angular/material' as mat;
+@use './_breakpoints' as breakpoints;
+
+// Define custom palettes
+$primary-palette: mat.define-palette(mat.$blue-palette, 700);
+$accent-palette: mat.define-palette(mat.$amber-palette, A400);
+$warn-palette: mat.define-palette(mat.$red-palette);
+
+// Create theme
+$theme: mat.define-light-theme((
+  color: (
+    primary: $primary-palette,
+    accent: $accent-palette,
+    warn: $warn-palette,
+  ),
+  typography: mat.define-typography-config(),
+  density: 0,
+));
+
+// Apply theme
+@include mat.core();
+@include mat.all-component-themes($theme);
+
+// Custom theme colors
+$custom-colors: (
+  'primary': #2196f3,
+  'primary-dark': #1976d2,
+  'primary-light': #64b5f6,
+  'accent': #ffc107,
+  'accent-dark': #ff8f00,
+  'accent-light': #ffecb3,
+  'success': #4caf50,
+  'warning': #ff9800,
+  'error': #f44336,
+  'info': #2196f3,
+  'background': #f8f9fa,
+  'surface': #ffffff,
+  'text-primary': #212121,
+  'text-secondary': #757575,
+  'text-disabled': #bdbdbd,
+  'border': #e0e0e0,
+  'divider': #eeeeee,
+);
+
+// Theme mixins
+@mixin theme-color($color-name) {
+  color: map-get($custom-colors, $color-name);
+}
+
+@mixin theme-background($color-name) {
+  background-color: map-get($custom-colors, $color-name);
+}
+
+@mixin theme-border($color-name) {
+  border-color: map-get($custom-colors, $color-name);
+}
+
+// Responsive typography
+@use '@angular/material' as mat;
+$typography-config: mat.define-typography-config(
+  $font-family: '"Roboto", "Helvetica Neue", sans-serif',
+  $headline-1: mat.define-typography-level(112px, 112px, 300, $letter-spacing: -0.05em),
+  $headline-2: mat.define-typography-level(56px, 56px, 400, $letter-spacing: -0.02em),
+  $headline-3: mat.define-typography-level(45px, 48px, 400, $letter-spacing: 0),
+  $headline-4: mat.define-typography-level(34px, 40px, 400, $letter-spacing: 0),
+  $headline-5: mat.define-typography-level(24px, 32px, 400, $letter-spacing: 0),
+  $headline-6: mat.define-typography-level(20px, 32px, 500, $letter-spacing: 0.15em),
+  $subtitle-1: mat.define-typography-level(16px, 28px, 400, $letter-spacing: 0.15em),
+  $subtitle-2: mat.define-typography-level(14px, 24px, 500, $letter-spacing: 0.1em),
+  $body-1: mat.define-typography-level(16px, 24px, 400, $letter-spacing: 0.5em),
+  $body-2: mat.define-typography-level(14px, 20px, 400, $letter-spacing: 0.25em),
+  $button: mat.define-typography-level(14px, 14px, 500, $letter-spacing: 0.25em),
+  $caption: mat.define-typography-level(12px, 20px, 400, $letter-spacing: 0.4em),
+  $input: mat.define-typography-level(16px, 20px, 400, $letter-spacing: 0.15em)
+);
+
+// Apply custom typography
+@include mat.all-component-typographies($typography-config);
+
+// Dark theme support
+$dark-theme: mat.define-dark-theme((
+  color: (
+    primary: mat.define-palette(mat.$blue-palette, 700),
+    accent: mat.define-palette(mat.$amber-palette, A400),
+    warn: mat.define-palette(mat.$red-palette),
+  ),
+));
+
+.dark-theme {
+  @include mat.all-component-colors($dark-theme);
+  
+  // Custom dark colors
+  --background: #121212;
+  --surface: #1e1e1e;
+  --text-primary: #ffffff;
+  --text-secondary: #b3b3b3;
+  --border: #333333;
+  --divider: #2c2c2c;
+}
+
+// Component-specific theming
+.mat-toolbar {
+  &.mat-primary {
+    background: linear-gradient(135deg, #2196f3, #1976d2);
+  }
+}
+
+.mat-card {
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  
+  @include breakpoints.respond-to(md) {
+    &:hover {
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+    }
+  }
+}
+
+.mat-button {
+  border-radius: 8px;
+  font-weight: 500;
+  
+  &.mat-primary {
+    background: linear-gradient(135deg, #2196f3, #1976d2);
+  }
+  
+  &.mat-accent {
+    background: linear-gradient(135deg, #ffc107, #ff8f00);
+  }
+}
+
+.mat-form-field {
+  .mat-form-field-outline {
+    border-radius: 8px;
+  }
+}
+
+// Custom scrollbar
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #a8a8a8;
+}

@@ -1,0 +1,179 @@
+// Automated responsive grid system
+.responsive-grid {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: 1fr; // Mobile first: single column
+  
+  // Automatic responsive behavior based on data attributes
+  &[data-cols="2"] {
+    @include respond-to(md) {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+  
+  &[data-cols="3"] {
+    @include respond-to(md) {
+      grid-template-columns: repeat(2, 1fr);
+    }
+    @include respond-to(lg) {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+  
+  &[data-cols="4"] {
+    @include respond-to(sm) {
+      grid-template-columns: repeat(2, 1fr);
+    }
+    @include respond-to(lg) {
+      grid-template-columns: repeat(4, 1fr);
+    }
+  }
+}
+
+// Automated responsive typography
+.responsive-text {
+  // Base mobile sizes
+  font-size: 1rem;
+  line-height: 1.5;
+  
+  // Size classes
+  &.text-xs { font-size: 0.75rem; }
+  &.text-sm { font-size: 0.875rem; }
+  &.text-base { font-size: 1rem; }
+  &.text-lg { font-size: 1.125rem; }
+  &.text-xl { font-size: 1.25rem; }
+  &.text-2xl { font-size: 1.5rem; }
+  &.text-3xl { font-size: 1.875rem; }
+  &.text-4xl { font-size: 2.25rem; }
+  
+  // Automatic scaling
+  @include respond-to(sm) {
+    &.text-xs { font-size: 0.875rem; }
+    &.text-sm { font-size: 1rem; }
+    &.text-base { font-size: 1.125rem; }
+    &.text-lg { font-size: 1.25rem; }
+    &.text-xl { font-size: 1.5rem; }
+    &.text-2xl { font-size: 1.875rem; }
+    &.text-3xl { font-size: 2.25rem; }
+    &.text-4xl { font-size: 3rem; }
+  }
+  
+  @include respond-to(lg) {
+    &.text-xs { font-size: 1rem; }
+    &.text-sm { font-size: 1.125rem; }
+    &.text-base { font-size: 1.25rem; }
+    &.text-lg { font-size: 1.5rem; }
+    &.text-xl { font-size: 1.875rem; }
+    &.text-2xl { font-size: 2.25rem; }
+    &.text-3xl { font-size: 3rem; }
+    &.text-4xl { font-size: 3.75rem; }
+  }
+}
+
+// Touch-friendly button system
+.touch-button {
+  // Mobile-first touch targets (minimum 44px)
+  min-height: 44px;
+  min-width: 44px;
+  padding: 12px 24px;
+  border-radius: 8px;
+  font-size: 16px; // Prevents zoom on iOS
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: none;
+  outline: none;
+  
+  // Hover states for desktop
+  @include respond-to(md) {
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+  }
+  
+  // Active states for all devices
+  &:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+  
+  // Size variants
+  &.btn-sm {
+    min-height: 36px;
+    min-width: 36px;
+    padding: 8px 16px;
+    font-size: 14px;
+  }
+  
+  &.btn-lg {
+    min-height: 52px;
+    min-width: 52px;
+    padding: 16px 32px;
+    font-size: 18px;
+    
+    @include respond-to(sm) {
+      min-height: 56px;
+      min-width: 56px;
+      font-size: 20px;
+    }
+  }
+}
+
+// Responsive card system
+.responsive-card {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  transition: all 0.3s ease;
+  
+  // Mobile layout (stacked)
+  display: flex;
+  flex-direction: column;
+  
+  // Tablet layout (side-by-side for some cards)
+  @include respond-to(md) {
+    &.card-horizontal {
+      flex-direction: row;
+      height: 200px;
+    }
+  }
+  
+  // Desktop hover effects
+  @include respond-to(lg) {
+    &:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+    }
+  }
+}
+
+// Responsive navigation
+.responsive-nav {
+  // Mobile: hamburger menu
+  @include respond-to(md) {
+    // Desktop: horizontal menu
+    .nav-menu {
+      display: flex;
+      flex-direction: row;
+    }
+  }
+}
+
+// Responsive images
+.responsive-img {
+  max-width: 100%;
+  height: auto;
+  
+  // Lazy loading placeholder
+  &.lazy-load {
+    background: #f0f0f0;
+    filter: blur(5px);
+    transition: filter 0.3s ease;
+    
+    &.loaded {
+      filter: blur(0);
+    }
+  }
+}
