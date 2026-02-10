@@ -8,9 +8,13 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MatStepperModule } from '@angular/material/stepper';
-import { CartService } from '../../../core/services/cart.service';
-import { OrderService } from '../../../core/services/order.service';
+import { CartService, CartItem } from '../../../core/services/cart.service';
 
+/**
+ * Checkout Component
+ * Handles the multi-step checkout process (Shipping -> Payment -> Confirm).
+ * Uses Angular Reactive Forms for validation.
+ */
 @Component({
   selector: 'app-checkout',
   standalone: true,
@@ -26,7 +30,10 @@ import { OrderService } from '../../../core/services/order.service';
   ],
   template: `
     <div class="checkout-container">
+      <h2>Checkout</h2>
+
       <mat-stepper linear #stepper>
+        <!-- Step 1: Shipping -->
         <mat-step [stepControl]="shippingForm">
           <form [formGroup]="shippingForm">
             <ng-template matStepLabel>Shipping</ng-template>
@@ -66,6 +73,7 @@ import { OrderService } from '../../../core/services/order.service';
           </form>
         </mat-step>
 
+        <!-- Step 2: Payment -->
         <mat-step [stepControl]="paymentForm">
           <form [formGroup]="paymentForm">
             <ng-template matStepLabel>Payment</ng-template>
@@ -90,13 +98,14 @@ import { OrderService } from '../../../core/services/order.service';
           </form>
         </mat-step>
 
+        <!-- Step 3: Confirm -->
         <mat-step>
           <ng-template matStepLabel>Confirm</ng-template>
           <h3>Order Summary</h3>
           <div class="order-review">
             <div *ngFor="let item of cartItems" class="review-item">
-              <span>{{item.product.name}} x {{item.quantity}}</span>
-              <span>\${{item.product.price * item.quantity}}</span>
+              <span>{{item.name}} x {{item.quantity}}</span>
+              <span>\${{item.price * item.quantity}}</span>
             </div>
           </div>
           <div class="total">Total: \${{total}}</div>
@@ -123,13 +132,12 @@ import { OrderService } from '../../../core/services/order.service';
 export class CheckoutComponent implements OnInit {
   shippingForm: FormGroup;
   paymentForm: FormGroup;
-  cartItems: any[] = [];
+  cartItems: CartItem[] = [];
   total = 0;
 
   constructor(
     private fb: FormBuilder,
     private cartService: CartService,
-    private orderService: OrderService,
     private router: Router
   ) {
     this.shippingForm = this.fb.group({
@@ -141,32 +149,35 @@ export class CheckoutComponent implements OnInit {
       zipCode: ['', Validators.required],
       phone: ['', Validators.required]
     });
+
     this.paymentForm = this.fb.group({
-      cardNumber: ['', Validators.required],
+      cardNumber: ['', [Validators.required, Validators.pattern('^[0-9]{16}$')]],
       expiry: ['', Validators.required],
-      cvc: ['', Validators.required]
+      cvc: ['', [Validators.required, Validators.pattern('^[0-9]{3,4}$')]]
     });
   }
 
   ngOnInit(): void {
-    this.cartService.items$.subscribe(items => {
-      this.cartItems = items;
-      this.total = items.reduce((sum, item) => sum + item.product.price * item.quantity, 0);
+    // Subscribe to cart updates
+    this.cartService.cart$.subscribe(cart => {
+      this.cartItems = cart.items;
+      this.total = cart.totalPrice;
     });
   }
 
   placeOrder(): void {
     const order = {
-      items: this.cartItems.map(item => ({ productId: item.product.id, quantity: item.quantity })),
+      items: this.cartItems.map(item => ({ productId: item.id, quantity: item.quantity })),
       shipping: this.shippingForm.value,
-      total: this.total
+      total: this.total,
+      paymentMethod: 'card' // Mock
     };
-    this.orderService.createOrder(order).subscribe({
-      next: (orderResult) => {
-        this.cartService.clear();
-        this.router.navigate(['/checkout/confirmation'], { queryParams: { orderId: orderResult.id } });
-      },
-      error: () => { /* TODO: Handle error */ }
-    });
+
+    // TODO: Call OrderService.createOrder
+    console.log('Placing order:', order);
+
+    // Mock success
+    this.cartService.clearCart();
+    this.router.navigate(['/checkout/confirmation'], { queryParams: { orderId: 'ORD-' + Date.now() } });
   }
 }

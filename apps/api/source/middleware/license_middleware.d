@@ -8,6 +8,7 @@ import std.conv;
 import std.string;
 import std.digest.sha;
 import std.base64;
+import std.datetime;
 
 /**
  * Hardware-Deterministic License Middleware
@@ -31,16 +32,23 @@ class LicenseMiddleware {
             return false;
         }
 
+        // 1. Check Machine ID
         string machineId = getMachineId();
         string expectedKey = generateLicenseKey(machineId, config.projectSalt);
 
-        if (expectedKey == config.licenseKey) {
-            writeln("[LICENSE] Valid license for machine: ", machineId);
-            return true;
-        } else {
+        if (expectedKey != config.licenseKey) {
             writeln("[LICENSE] Invalid license key. Expected: ", expectedKey, " Got: ", config.licenseKey);
             return false;
         }
+
+        // 2. Check Expiration Date
+        if (!isLicenseExpired(config.licenseExpires)) {
+            writeln("[LICENSE] License expired on: ", config.licenseExpires);
+            return false;
+        }
+
+        writeln("[LICENSE] Valid license for machine: ", machineId);
+        return true;
     }
 
     /**
@@ -53,11 +61,39 @@ class LicenseMiddleware {
             res.headers["Content-Type"] = "application/json";
             auto errorResponse = [
                 "error": "Invalid or missing license key.",
-                "message": "Please run 'tools/bin/project-checkpoint --generate' to generate a valid key."
+                "message": "Please run 'dub run tools:checkpoint -- --generate' to generate a valid key."
             ].toJSON();
             res.writeBody(errorResponse.toString());
             res.sendClose = true;
         }
+    }
+
+    /**
+     * Check if the license is expired.
+     * Logic: Parse YYYY-MM-DD and compare with current time.
+     * If config.licenseExpires is "2099-12-31", it's considered permanent.
+     */
+    private bool isLicenseExpired(string expiryDateStr) {
+        if (expiryDateStr == "2099-12-31") {
+            return false; // Permanent license
+        }
+
+        try {
+            // Parse "YYYY-MM-DD"
+            SysTime expiryDate = SysTime.fromISOExtString(expiryDateStr ~ "T00:00:00");
+            SysTime now = Clock.currTime();
+
+            if (now > expiryDate) {
+                writeln("[LICENSE] License expired. Expired on: ", expiryDateStr);
+                return true;
+            }
+        } catch (Exception e) {
+            writeln("[LICENSE] Error parsing expiration date: ", e.msg);
+            // Fail secure: assume expired
+            return true;
+        }
+
+        return false;
     }
 
     /**

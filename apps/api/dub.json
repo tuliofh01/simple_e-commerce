@@ -2,13 +2,12 @@
     "authors": ["Tulio F"],
     "copyright": "Copyright © 2026",
     "dependencies": {
-        "vibe-d": "~>0.9.5",
-        "sqlite3": "*"
+        "vibe-d": "~>0.9.5"
     },
-    "description": "Simple E-Commerce API",
+    "description": "Project Checkpoint Tool",
     "license": "Apache-2.0",
-    "name": "simple-ecommerce-api",
-    "sourcePaths": ["source"],
-    "targetPath": "bin",
+    "name": "checkpoint",
+    "sourcePaths": ["source/tools"],
+    "targetName": "checkpoint",
     "version": "1.0.0"
 }

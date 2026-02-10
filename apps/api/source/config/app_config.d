@@ -26,6 +26,7 @@ struct AppConfig {
     // Hardware-Deterministic Licensing
     string projectSalt; // Unique salt for this project version
     string licenseKey;  // Generated key based on machine-id + salt
+    string licenseExpires; // Expiration date (YYYY-MM-DD)
 }
 
 /**
@@ -63,7 +64,8 @@ class ConfigManager {
             "", // SMTP password
             "",  // hCaptcha secret
             "SIMPLE-ECOMMERCE-2026-V1", // Project Salt (Immutable)
-            ""  // License Key (Generated)
+            "",  // License Key (Generated)
+            "2099-12-31" // Default expiration (Permanent)
         );
 
         if (exists(configPath)) {
@@ -91,6 +93,7 @@ class ConfigManager {
                         case "HCAPTCHA_SECRET": appConfig.hcaptchaSecret = value; break;
                         case "PROJECT_SALT": appConfig.projectSalt = value; break;
                         case "LICENSE_KEY": appConfig.licenseKey = value; break;
+                        case "LICENSE_EXPIRES": appConfig.licenseExpires = value; break;
                         default: break;
                     }
                 }

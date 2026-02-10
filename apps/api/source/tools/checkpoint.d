@@ -21,7 +21,17 @@ void main(string[] args) {
     writeln("   Simple E-Commerce Project Checkpoint");
     writeln("===========================================");
 
-    string projectRoot = thisExePath().dirName().dirName();
+    // Determine Project Root using Environment (PWD) or fallback
+    string pwd = environment.get("PWD", thisExePath().dirName());
+
+    // Fix: If PWD ends with 'apps/api', go up 2 levels.
+    string projectRoot;
+    if (pwd.endsWith("apps/api")) {
+        projectRoot = pwd[0..$-8]; // Remove "apps/api"
+    } else {
+        projectRoot = pwd;
+    }
+
     writeln("Project Root: ", projectRoot);
 
     if (args.length > 1 && args[1] == "--generate") {
@@ -62,7 +72,7 @@ void generateLicenseKey(string projectRoot, string[] args) {
             try {
                 daysValid = arg[7..$].to!long;
                 isPermanent = false;
-                auto expiryDate = Clock.currTime().add!"days"(daysValid);
+                auto expiryDate = Clock.currTime() + dur!"days"(daysValid);
                 expiresAt = expiryDate.toISOExtString()[0..10];
                 writeln("License Duration: ", daysValid, " days");
             } catch (Exception e) {
@@ -80,7 +90,7 @@ void generateLicenseKey(string projectRoot, string[] args) {
     string salt = "SIMPLE-ECOMMERCE-2026-V1";
     string combined = machineId ~ salt;
     auto hash = sha256Of(combined);
-    string hexHash = toHexString(hash);
+    string hexHash = toHexString(hash).idup; // Make immutable string mutable for slicing
 
     // Format: XXXX-XXXX-XXXX-XXXX-DDDD (Add duration hash for uniqueness)
     string serial = format("%s-%s-%s-%s",
@@ -106,7 +116,7 @@ void generateContext(string projectRoot) {
     string[] fileList;
     auto projectFiles = dirEntries(projectRoot, SpanMode.depth);
     foreach (entry; projectFiles) {
-        if (entry.isFile && entry.name.endsWith(".d") || entry.name.endsWith(".ts") || entry.name.endsWith(".json")) {
+        if (entry.isFile && (entry.name.endsWith(".d") || entry.name.endsWith(".ts") || entry.name.endsWith(".json"))) {
             fileList ~= entry.name;
         }
     }
@@ -121,7 +131,7 @@ void generateContext(string projectRoot) {
     context["status"] = "MVP in Progress";
     context["files_scanned"] = cast(int)fileList.length;
 
-    // Write to docs/ref/ai-progress.json
+    // Write to docs/ref/ai-progress.json (Absolute path)
     string outputPath = buildPath(projectRoot, "docs/ref/ai-progress.json");
     writeln("Writing context to: ", outputPath);
     std.file.write(outputPath, context.toPrettyString());
