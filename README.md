@@ -37,7 +37,7 @@ We use a modern **Monorepo** structure to separate concerns while keeping the ec
 simple_ecommerce/
 ├── apps/
 │   ├── api/         # DLang Backend (vibe.d)
-│   └── web/          # Angular 17 Frontend
+│   └── web/         # Angular 17 Frontend
 ├── tools/           # Automation & Checkpoint tools
 ├── deploy/          # Docker & CI/CD configurations
 ├── docs/            # Architecture & Guides
@@ -83,6 +83,43 @@ simple_ecommerce/
     # Terminal 2: Frontend
     cd apps/web && npm start
     ```
+
+## 🔌 API Endpoints
+
+| Method | Endpoint | Description | Auth |
+| :--- | :--- | :--- | :--- |
+| GET | `/api/products` | List all products | Public |
+| GET | `/api/products/:id` | Get product by ID | Public |
+| POST | `/api/auth/login` | User login | Public |
+| POST | `/api/orders` | Create new order | User |
+| GET | `/api/admin/stats` | Dashboard stats | Admin |
+
+*Full API Reference:* [docs/developer-guide/api-reference.md](docs/developer-guide/api-reference.md)
+
+## 🛡️ Security & Licensing
+
+This project uses a **Hardware-Deterministic License System**.
+*   Each server instance requires a unique license key.
+*   Keys are generated based on the machine's unique ID.
+*   Unauthorized instances will be rejected at startup.
+
+## 📚 Documentation
+
+*   **Architecture:** [docs/architecture/README.md](docs/architecture/README.md)
+*   **Guides:** [docs/guides/README.md](docs/guides/README.md)
+*   **API Reference:** [docs/developer-guide/api-reference.md](docs/developer-guide/api-reference.md)
+*   **System Overview:** [docs/system-overview.md](docs/system-overview.md)
+
+## 🛠️ Troubleshooting
+
+### "Dub not found"
+Ensure DLang is installed and `dub` is in your PATH.
+
+### "Machine ID not found"
+The license generator relies on `/etc/machine-id`. On Windows, it uses the hostname fallback.
+
+### "SQLite database not found"
+Run the backend once to initialize the database in `data/database.db`.
 
 ## 📄 License
 
