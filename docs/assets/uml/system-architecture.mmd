@@ -1,0 +1,30 @@
+graph TD
+    Client[Client Browser] --> |HTTP| Angular[Angular 17 Frontend]
+    Angular --> |REST API| VibeD[Vibe-D Backend]
+    VibeD --> |SQLite| Database[(SQLite Database)]
+    
+    subgraph Authentication
+        JWT[JWT Handler] --> |Tokens| VibeD
+        VibeD --> |Auth| Client
+    end
+    
+    subgraph Backend Services
+        Auth[Auth Controller]
+        Products[Product Controller]
+        Orders[Order Controller]
+        Blog[Blog Controller]
+        VibeD --> Auth
+        VibeD --> Products
+        VibeD --> Orders
+        VibeD --> Blog
+    end
+    
+    subgraph Security
+        CORS[CORS Middleware]
+        RateLimiter[Rate Limiter]
+        JWT --> Auth
+    end
+    
+    style VibeD fill:#00bcd4
+    style Angular fill:#dd0031
+    style Database fill:#003b57

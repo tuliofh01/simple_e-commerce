@@ -1,0 +1,4 @@
+.shop-container { padding: 24px; max-width: 1200px; margin: 0 auto; }
+.filters { display: flex; gap: 16px; flex-wrap: wrap; margin-bottom: 24px; }
+.filters mat-form-field { min-width: 200px; }
+.products-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 24px; }

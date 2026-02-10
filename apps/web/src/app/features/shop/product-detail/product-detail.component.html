@@ -1,0 +1,48 @@
+<div class="product-detail-container" *ngIf="product">
+  <div class="product-images">
+    <img [src]="product.imageUrl" [alt]="product.name" class="main-image">
+    <div class="thumbnail-grid" *ngIf="product.images?.length">
+      <img *ngFor="let img of product.images" [src]="img" class="thumbnail">
+    </div>
+  </div>
+
+  <div class="product-info">
+    <h1>{{product.name}}</h1>
+    <p class="price">\${{product.price}}</p>
+    <p class="description">{{product.description}}</p>
+
+    <div class="stock-status" [class.in-stock]="product.stock > 0" [class.out-of-stock]="product.stock === 0">
+      {{product.stock > 0 ? 'In Stock (' + product.stock + ')' : 'Out of Stock'}}
+    </div>
+
+    <div class="quantity-selector">
+      <button mat-icon-button (click)="decreaseQuantity()" [disabled]="quantity <= 1">-</button>
+      <mat-form-field>
+        <input matInput type="number" [(ngModel)]="quantity" min="1" [max]="product.stock">
+      </mat-form-field>
+      <button mat-icon-button (click)="increaseQuantity()" [disabled]="quantity >= product.stock">+</button>
+    </div>
+
+    <button mat-raised-button color="primary" (click)="addToCart()" [disabled]="product.stock === 0">
+      <mat-icon>shopping_cart</mat-icon>
+      Add to Cart
+    </button>
+
+    <mat-tab-group>
+      <mat-tab label="Description">
+        <div class="tab-content">{{product.longDescription}}</div>
+      </mat-tab>
+      <mat-tab label="Specifications" *ngIf="product.specifications">
+        <div class="tab-content">
+          <div *ngFor="let spec of product.specifications | keyvalue">
+            <strong>{{spec.key}}:</strong> {{spec.value}}
+          </div>
+        </div>
+      </mat-tab>
+      <mat-tab label="Reviews" *ngIf="product.reviews">
+        <div class="tab-content">
+        </div>
+      </mat-tab>
+    </mat-tab-group>
+  </div>
+</div>

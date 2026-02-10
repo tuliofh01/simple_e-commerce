@@ -1,0 +1,42 @@
+<div class="shop-container">
+  <div class="filters">
+    <mat-form-field>
+      <mat-label>Search</mat-label>
+      <input matInput (input)="onSearch($event)" placeholder="Search products...">
+      <mat-icon matSuffix>search</mat-icon>
+    </mat-form-field>
+
+    <mat-form-field>
+      <mat-label>Category</mat-label>
+      <mat-select (selectionChange)="onCategoryChange($event.value)">
+        <mat-option value="">All Categories</mat-option>
+        <mat-option *ngFor="let cat of categories" [value]="cat">{{cat}}</mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field>
+      <mat-label>Sort By</mat-label>
+      <mat-select (selectionChange)="onSortChange($event.value)">
+        <mat-option value="name">Name</mat-option>
+        <mat-option value="price_asc">Price: Low to High</mat-option>
+        <mat-option value="price_desc">Price: High to Low</mat-option>
+        <mat-option value="newest">Newest</mat-option>
+      </mat-select>
+    </mat-form-field>
+  </div>
+
+  <div class="products-grid">
+    <app-product-card
+      *ngFor="let product of products"
+      [product]="product"
+      (addToCart)="addToCart($event)">
+    </app-product-card>
+  </div>
+
+  <mat-paginator
+    [length]="totalProducts"
+    [pageSize]="pageSize"
+    [pageIndex]="pageIndex"
+    (page)="onPageChange($event)">
+  </mat-paginator>
+</div>

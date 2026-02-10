@@ -1,0 +1,64 @@
+classDiagram
+    class User {
+        +int id
+        +string email
+        +string name
+        +string password_hash
+        +string role
+        +datetime created_at
+        +login()
+        +register()
+        +updateProfile()
+    }
+    
+    class Product {
+        +int id
+        +string name
+        +decimal price
+        +int stock
+        +string category
+        +string description
+        +string image_url
+        +datetime created_at
+    }
+    
+    class Order {
+        +int id
+        +int user_id
+        +string status
+        +decimal total
+        +string shipping_address
+        +datetime created_at
+    }
+    
+    class OrderItem {
+        +int id
+        +int order_id
+        +int product_id
+        +int quantity
+        +decimal price
+    }
+    
+    class BlogPost {
+        +int id
+        +int author_id
+        +string title
+        +string content
+        +string status
+        +datetime published_at
+    }
+    
+    class Comment {
+        +int id
+        +int post_id
+        +int user_id
+        +string content
+        +datetime created_at
+    }
+    
+    User "1" --> "*" Order : places
+    User "1" --> "*" BlogPost : writes
+    Product "1" --> "*" OrderItem : contains
+    Order "1" --> "*" OrderItem : has
+    BlogPost "1" --> "*" Comment : has
+    User "1" --> "*" Comment : writes

@@ -1,0 +1,46 @@
+graph LR
+    subgraph Frontend
+        A[App Component]
+        B[Router]
+        C[Auth Guard]
+        D[Auth Interceptor]
+    end
+    
+    subgraph Feature Modules
+        E[Home]
+        F[Shop]
+        G[Auth]
+        H[Checkout]
+        I[Account]
+        J[Admin]
+        K[Blog]
+    end
+    
+    subgraph Shared
+        L[Product Card]
+        M[Blog Card]
+        N[Responsive Directive]
+    end
+    
+    A --> B
+    B --> E
+    B --> F
+    B --> G
+    B --> H
+    B --> I
+    B --> J
+    B --> K
+    
+    C --> G
+    C --> H
+    C --> I
+    C --> J
+    
+    D --> C
+    
+    F --> L
+    K --> M
+    
+    style A fill:#dd0031
+    style F fill:#dd0031
+    style H fill:#dd0031

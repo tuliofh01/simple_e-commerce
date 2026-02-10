@@ -1,0 +1,26 @@
+flowchart TD
+    A[Admin] --> B[Product Management]
+    B --> C[Add Product]
+    C --> D[Fill Details]
+    D --> E[Save Product]
+    
+    B --> F[Edit Product]
+    F --> G[Update Stock]
+    G --> H[Save Changes]
+    
+    B --> I[Delete Product]
+    I --> J[Confirm]
+    J --> K[Remove]
+    
+    A --> L[Order Management]
+    L --> M[View Orders]
+    M --> N[Update Status]
+    N --> O[Notify Customer]
+    
+    A --> P[User Management]
+    P --> Q[View Users]
+    Q --> R[Change Roles]
+    
+    style A fill:#ff5722
+    style L fill:#ff5722
+    style P fill:#ff5722

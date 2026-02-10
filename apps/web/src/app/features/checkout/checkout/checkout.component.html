@@ -1,0 +1,82 @@
+<div class="checkout-container">
+  <mat-stepper linear #stepper>
+    <mat-step [stepControl]="shippingForm">
+      <form [formGroup]="shippingForm">
+        <ng-template matStepLabel>Shipping</ng-template>
+        <div class="form-row">
+          <mat-form-field>
+            <mat-label>First Name</mat-label>
+            <input matInput formControlName="firstName">
+          </mat-form-field>
+          <mat-form-field>
+            <mat-label>Last Name</mat-label>
+            <input matInput formControlName="lastName">
+          </mat-form-field>
+        </div>
+        <mat-form-field>
+          <mat-label>Address</mat-label>
+          <input matInput formControlName="address">
+        </mat-form-field>
+        <mat-form-field>
+          <mat-label>City</mat-label>
+          <input matInput formControlName="city">
+        </mat-form-field>
+        <div class="form-row">
+          <mat-form-field>
+            <mat-label>State</mat-label>
+            <input matInput formControlName="state">
+          </mat-form-field>
+          <mat-form-field>
+            <mat-label>ZIP Code</mat-label>
+            <input matInput formControlName="zipCode">
+          </mat-form-field>
+        </div>
+        <mat-form-field>
+          <mat-label>Phone</mat-label>
+          <input matInput formControlName="phone">
+        </mat-form-field>
+        <button mat-raised-button color="primary" matStepperNext>Continue to Payment</button>
+      </form>
+    </mat-step>
+
+    <mat-step [stepControl]="paymentForm">
+      <form [formGroup]="paymentForm">
+        <ng-template matStepLabel>Payment</ng-template>
+        <mat-form-field>
+          <mat-label>Card Number</mat-label>
+          <input matInput formControlName="cardNumber" placeholder="4242 4242 4242 4242">
+        </mat-form-field>
+        <div class="form-row">
+          <mat-form-field>
+            <mat-label>Expiry</mat-label>
+            <input matInput formControlName="expiry" placeholder="MM/YY">
+          </mat-form-field>
+          <mat-form-field>
+            <mat-label>CVC</mat-label>
+            <input matInput formControlName="cvc">
+          </mat-form-field>
+        </div>
+        <div class="step-actions">
+          <button mat-button matStepperPrevious>Back</button>
+          <button mat-raised-button color="primary" matStepperNext>Review Order</button>
+        </div>
+      </form>
+    </mat-step>
+
+    <mat-step>
+      <ng-template matStepLabel>Confirm</ng-template>
+      <h3>Order Summary</h3>
+      <div class="order-review">
+        <div *ngFor="let item of cartItems" class="review-item">
+          <span>{{item.product.name}} x {{item.quantity}}</span>
+          <span>\${{item.product.price * item.quantity}}</span>
+        </div>
+      </div>
+      <div class="total">Total: \${{total}}</div>
+      <div class="step-actions">
+        <button mat-button matStepperPrevious>Back</button>
+        <button mat-raised-button color="primary" (click)="placeOrder()">Place Order</button>
+      </div>
+    </mat-step>
+  </mat-stepper>
+</div>

@@ -1,0 +1,61 @@
+<div class="cart-container">
+  <h1>Shopping Cart</h1>
+
+  <div *ngIf="items.length === 0" class="empty-cart">
+    <mat-icon>shopping_cart</mat-icon>
+    <h2>Your cart is empty</h2>
+    <p>Continue shopping to add items to your cart.</p>
+    <button mat-raised-button color="primary" routerLink="/shop">Browse Products</button>
+  </div>
+
+  <div *ngIf="items.length > 0" class="cart-content">
+    <div class="cart-items">
+      <div *ngFor="let item of items" class="cart-item">
+        <img [src]="item.product.imageUrl" [alt]="item.product.name" class="item-image">
+        <div class="item-details">
+          <h3>{{item.product.name}}</h3>
+          <p class="price">\${{item.product.price}}</p>
+          <p class="subtotal">Subtotal: \${{item.product.price * item.quantity}}</p>
+        </div>
+        <div class="quantity-controls">
+          <button mat-icon-button (click)="decreaseQuantity(item)" [disabled]="item.quantity <= 1">-</button>
+          <span>{{item.quantity}}</span>
+          <button mat-icon-button (click)="increaseQuantity(item)" [disabled]="item.quantity >= item.product.stock">+</button>
+        </div>
+        <button mat-icon-button color="warn" (click)="removeItem(item)">
+          <mat-icon>delete</mat-icon>
+        </button>
+      </div>
+    </div>
+
+    <mat-card class="order-summary">
+      <mat-card-header>
+        <mat-card-title>Order Summary</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="summary-row">
+          <span>Subtotal</span>
+          <span>\${{subtotal}}</span>
+        </div>
+        <div class="summary-row">
+          <span>Shipping</span>
+          <span>\${{shipping}}</span>
+        </div>
+        <div class="summary-row">
+          <span>Tax</span>
+          <span>\${{tax}}</span>
+        </div>
+        <mat-divider></mat-divider>
+        <div class="summary-row total">
+          <span>Total</span>
+          <span>\${{total}}</span>
+        </div>
+      </mat-card-content>
+      <mat-card-actions>
+        <button mat-raised-button color="primary" routerLink="/checkout">
+          Proceed to Checkout
+        </button>
+      </mat-card-actions>
+    </mat-card>
+  </div>
+</div>

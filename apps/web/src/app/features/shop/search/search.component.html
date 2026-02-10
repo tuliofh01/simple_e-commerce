@@ -1,0 +1,15 @@
+<div class="search-container">
+  <h1>Search Results for "{{query}}"</h1>
+  <p>{{products.length}} results found</p>
+  <div class="products-grid">
+    <app-product-card
+      *ngFor="let product of products"
+      [product]="product"
+      (addToCart)="addToCart($event)">
+    </app-product-card>
+  </div>
+  <div *ngIf="products.length === 0" class="no-results">
+    <p>No products match your search.</p>
+    <p>Try different keywords or browse our categories.</p>
+  </div>
+</div>

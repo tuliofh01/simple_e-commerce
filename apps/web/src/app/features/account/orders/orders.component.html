@@ -1,0 +1,27 @@
+<div class="orders-container">
+  <h1>My Orders</h1>
+
+  <div *ngIf="orders.length === 0" class="no-orders">
+    <p>You haven't placed any orders yet.</p>
+    <button mat-raised-button color="primary" routerLink="/shop">Start Shopping</button>
+  </div>
+
+  <div class="orders-list">
+    <mat-card *ngFor="let order of orders" class="order-card">
+      <mat-card-header>
+        <mat-card-title>Order #{{order.id}}</mat-card-title>
+        <mat-card-subtitle>{{order.createdAt | date}}</mat-card-subtitle>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="order-status" [class]="order.status">{{order.status}}</div>
+        <div class="order-total">Total: \${{order.total}}</div>
+        <div class="order-items">
+          <span *ngFor="let item of order.items">{{item.productName}} x {{item.quantity}}</span>
+        </div>
+      </mat-card-content>
+      <mat-card-actions>
+        <button mat-button color="primary" [routerLink]="['/account/orders', order.id]">View Details</button>
+      </mat-card-actions>
+    </mat-card>
+  </div>
+</div>

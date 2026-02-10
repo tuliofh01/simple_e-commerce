@@ -1,0 +1,36 @@
+sequenceDiagram
+    participant U as User
+    participant F as Frontend
+    participant A as API
+    participant D as Database
+    participant J as JWT
+    
+    U->>F: Login (email/password)
+    F->>A: POST /api/auth/login
+    A->>D: Find user by email
+    D-->>A: User record
+    A->>A: Validate password
+    A->>J: Generate JWT tokens
+    J-->>A: access_token, refresh_token
+    A-->>F: { tokens, user }
+    F->>F: Store tokens
+    F-->>U: Redirect to dashboard
+    
+    U->>F: Access protected route
+    F->>A: GET /api/auth/profile
+    A->>J: Validate JWT
+    J-->>A: Token valid
+    A->>D: Get user data
+    D-->>A: User profile
+    A-->>F: User data
+    F-->>U: Show profile
+    
+    Note over U,J: Token expires after 15 minutes
+    
+    U->>F: Token expired
+    F->>A: POST /api/auth/refresh
+    A->>J: Validate refresh token
+    J-->>A: Refresh valid
+    A->>J: Generate new access token
+    J-->>A: new_access_token
+    A-->>F: { access_token }

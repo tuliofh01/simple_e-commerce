@@ -1,0 +1,27 @@
+flowchart TD
+    A[User] --> B[View Products]
+    B --> C{Add to Cart?}
+    
+    C -->|Yes| D[Select Quantity]
+    D --> E[Add to Cart]
+    E --> F[Continue Shopping]
+    
+    C -->|No| F
+    
+    F --> G[View Cart]
+    G --> H{Checkout?}
+    
+    H -->|Yes| I[Login/Register]
+    I --> J[Shipping Address]
+    J --> K[Payment]
+    K --> L[Review Order]
+    L --> M[Place Order]
+    M --> N[Order Confirmation]
+    
+    H -->|No| B
+    
+    N --> O[View Order History]
+    O --> P[Order Details]
+    
+    style N fill:#4caf50
+    style M fill:#ff9800

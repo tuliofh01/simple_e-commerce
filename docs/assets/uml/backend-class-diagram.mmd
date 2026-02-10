@@ -1,0 +1,58 @@
+classDiagram
+    class Server {
+        +HTTPServerSettings settings
+        +registerRoutes()
+        +start()
+        +stop()
+    }
+    
+    class AuthController {
+        +POST register()
+        +POST login()
+        +POST refresh()
+        +GET profile()
+        +PUT profile()
+        +PUT changePassword()
+    }
+    
+    class ProductController {
+        +GET products()
+        +GET products/:id()
+        +GET products/search()
+        +POST products()
+        +PUT products/:id()
+        +DELETE products/:id()
+    }
+    
+    class OrderController {
+        +POST orders()
+        +GET orders()
+        +GET orders/:id()
+        +PUT orders/:id/status()
+    }
+    
+    class BlogController {
+        +GET blog/posts()
+        +GET blog/posts/:id()
+        +POST blog/posts()
+        +DELETE blog/posts/:id()
+    }
+    
+    class JWTAuth {
+        +generateToken()
+        +validateToken()
+        +extractClaims()
+    }
+    
+    class AuthMiddleware {
+        +handleRequest()
+        +checkRole()
+    }
+    
+    Server --> AuthController
+    Server --> ProductController
+    Server --> OrderController
+    Server --> BlogController
+    AuthController --> JWTAuth
+    AuthController --> AuthMiddleware
+    AuthMiddleware --> JWTAuth

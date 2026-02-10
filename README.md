@@ -1,81 +1,97 @@
-# Simple E-Commerce Platform
+# 🛒 Simple E-Commerce Platform
 
-A comprehensive, enterprise-grade e-commerce solution built with DLang backend and Angular frontend, featuring mobile-first responsive design, SEO optimization, Google Ads integration, and cloud deployment capabilities.
+> A high-performance, self-hosted e-commerce engine designed for independence and speed.
 
-## 🎯 Perfect For Small Business Owners
+## 🎯 The Mission
 
-- **Easy Setup**: No complex configuration required
-- **All-in-One**: Blog, E-commerce, and Admin Dashboard
-- **Secure**: JWT authentication, encrypted data
-- **Modern**: Angular Material UI, responsive design
-- **Affordable**: Open-source with no licensing fees
+In an era of bloated CMS platforms and expensive SaaS subscriptions, **Simple E-Commerce** stands as a declaration of digital sovereignty. We are building a system that respects the user's resources, data, and freedom.
 
-## 🚀 Key Features
+### Why this stack?
+*   **DLang (vibe.d)**: The performance of C++ with the productivity of Python. Non-blocking I/O allows thousands of concurrent connections with minimal memory.
+*   **Angular 17**: Enterprise-grade structure with Standalone Components. Reactive state management ensures predictable UI updates.
+*   **SQLite**: ACID-compliant, zero-configuration database. Perfect for small-to-medium businesses (SMBs) without the overhead of a heavy DB server.
 
-### 🛒 E-commerce
-- Product catalog with images
-- Shopping cart with local storage
-- Stripe payment integration
-- Order management
-- Email confirmations
+## 🚀 Key Differentiators
 
-### 📝 Blog System
-- Create and publish posts
-- Image and video uploads
-- Comment system
-- Admin moderation
+| Feature | **Simple E-Commerce** | WordPress + WooCommerce |
+| :--- | :--- | :--- |
+| **Language** | **DLang** (Compiled) | PHP (Interpreted) |
+| **Performance** | Sub-200ms API responses | Often 1s+ without caching |
+| **Security** | Hardware-Locked Licensing | Plugin-vulnerable |
+| **Data** | **You own it.** SQLite file. | Scattered MySQL tables |
+| **Deployment** | Single binary + SPA | Heavy LAMP stack |
 
-### 👥 Admin Dashboard
-- User management
-- Order tracking
-- Content moderation
-- Financial reports
-- Stock management
+## 🇧🇷 Um Convite à Comunidade Lusófona
 
-## 📋 Requirements
+Este projeto nasceu da vontade de democratizar tecnologia de ponta. Queremos que o pequeno empreendedor brasileiro, angolano, português ou moçambicano tenha o mesmo poder de fogo de uma gigante do varejo, **sem pagar taxas abusivas**.
 
-- DLang compiler (dmd)
-- Node.js 18+
-- Angular CLI
-- SQLite3
-- Git
-- Docker
+**Precisamos de você:** A documentação técnica está em inglês para alcançar o mundo, mas o coração deste projeto bate em português. Ajude-nos a traduzir, adaptar e melhorar este sistema para a nossa realidade.
 
-## 🛠️ Quick Start
+> *"A tecnologia é uma ferramenta. O que você constrói com ela é a sua obra."*
 
-### Backend Setup
-```bash
-cd backend
-dub build
-./bin/simple_ecommerce
+## 📂 Project Structure
+
+We use a modern **Monorepo** structure to separate concerns while keeping the ecosystem unified.
+
+```
+simple_ecommerce/
+├── apps/
+│   ├── api/         # DLang Backend (vibe.d)
+│   └── web/          # Angular 17 Frontend
+├── tools/           # Automation & Checkpoint tools
+├── deploy/          # Docker & CI/CD configurations
+├── docs/            # Architecture & Guides
+└── data/            # Local SQLite Database
 ```
 
-### Frontend Setup
-```bash
-cd frontend
-npm install
-ng serve
-```
+## 🛠️ Getting Started
 
-### Docker Setup
-```bash
-docker-compose up -d
-```
+### Prerequisites
+*   **DLang SDK**: [https://dlang.org/download](https://dlang.org/download)
+*   **Node.js 20+**: [https://nodejs.org](https://nodejs.org)
+*   **Docker**: [https://docker.com](https://docker.com)
 
-## 💰 Business Benefits
+### Quick Install
 
-- **Zero Transaction Fees**: No platform commissions
-- **Complete Control**: Own your customer data
-- **Scalable**: Grows with your business
-- **Professional**: Modern, responsive design
-- **Secure**: Enterprise-grade security
+1.  **Clone the repository**
+    ```bash
+    git clone https://github.com/tuliofh01/simple_e-commerce.git
+    cd simple_ecommerce
+    ```
 
-## 📞 Support
+2.  **Sync Dependencies**
+    ```bash
+    # Automated setup
+    chmod +x tools/sync.sh
+    ./tools/sync.sh
+    ```
 
-- Documentation: `/docs`
-- Issues: [GitHub Issues](https://github.com/tuliofh01/simple_e-commerce/issues)
-- Email: support@simple_ecommerce.com
+3.  **Generate License**
+    Hardware-locking is essential for security.
+    ```bash
+    cd apps/api
+    # Run the checkpoint tool to generate your unique key
+    dub run tools:checkpoint -- --generate
+    # Follow the instructions to update apps/api/.env
+    ```
+
+4.  **Run**
+    ```bash
+    # Terminal 1: Backend
+    cd apps/api && dub run
+
+    # Terminal 2: Frontend
+    cd apps/web && npm start
+    ```
 
 ## 📄 License
 
-Apache License 2.0 - See [LICENSE](LICENSE) file for details.
+This project is licensed under the **Apache License 2.0**.
+
+## 🤝 Contributing
+
+We welcome contributions! Please read our [Contributing Guide](docs/CONTRIBUTING.md) before submitting PRs.
+
+---
+
+**Built with ❤️ and efficient code.**

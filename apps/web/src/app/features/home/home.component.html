@@ -1,0 +1,84 @@
+<div class="home-container">
+  <section class="hero-section">
+    <div class="hero-content">
+      <h1 class="hero-title">Welcome to Our Store</h1>
+      <p class="hero-subtitle">Discover amazing products at great prices</p>
+      <button mat-raised-button color="primary" routerLink="/shop" class="cta-button">
+        <mat-icon>shopping_cart</mat-icon>
+        Shop Now
+      </button>
+    </div>
+  </section>
+
+  <section class="featured-section">
+    <h2 class="section-title">Featured Products</h2>
+    <div class="products-grid" *ngIf="featuredProducts$ | async as products; else loadingProducts">
+      <app-product-card 
+        *ngFor="let product of products" 
+        [product]="product"
+        (addToCart)="onAddToCart($event)">
+      </app-product-card>
+    </div>
+    <ng-template #loadingProducts>
+      <div class="loading-container">
+        <div class="loading-spinner"></div>
+        <p>Loading products...</p>
+      </div>
+    </ng-template>
+  </section>
+
+  <section class="blog-section">
+    <h2 class="section-title">Latest from Our Blog</h2>
+    <div class="blog-grid" *ngIf="latestPosts$ | async as posts; else loadingPosts">
+      <app-blog-card 
+        *ngFor="let post of posts" 
+        [post]="post">
+      </app-blog-card>
+    </div>
+    <ng-template #loadingPosts>
+      <div class="loading-container">
+        <div class="loading-spinner"></div>
+        <p>Loading blog posts...</p>
+      </div>
+    </ng-template>
+  </section>
+
+  <section class="features-section">
+    <div class="features-grid">
+      <div class="feature-card">
+        <mat-icon>local_shipping</mat-icon>
+        <h3>Free Shipping</h3>
+        <p>On orders over $50</p>
+      </div>
+      <div class="feature-card">
+        <mat-icon>security</mat-icon>
+        <h3>Secure Payment</h3>
+        <p>100% secure transactions</p>
+      </div>
+      <div class="feature-card">
+        <mat-icon>support_agent</mat-icon>
+        <h3>24/7 Support</h3>
+        <p>Dedicated customer service</p>
+      </div>
+      <div class="feature-card">
+        <mat-icon>replay</mat-icon>
+        <h3>Easy Returns</h3>
+        <p>30-day return policy</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="newsletter-section">
+    <h2>Subscribe to Our Newsletter</h2>
+    <p>Get updates on new products and special offers</p>
+    <form class="newsletter-form">
+      <mat-form-field appearance="outline">
+        <mat-label>Your email</mat-label>
+        <input matInput placeholder="Enter your email">
+      </mat-form-field>
+      <button mat-raised-button color="primary" type="submit">
+        Subscribe
+      </button>
+    </form>
+  </section>
+</div>

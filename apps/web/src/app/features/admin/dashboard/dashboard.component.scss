@@ -1,0 +1,12 @@
+.dashboard-container { padding: 24px; max-width: 1200px; margin: 0 auto; }
+h1 { margin-bottom: 24px; }
+.stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 24px; }
+.stat-card mat-icon { font-size: 48px; width: 48px; height: 48px; color: #1976d2; }
+.stat-value { font-size: 32px; font-weight: bold; margin: 8px 0; }
+.stat-label { color: #666; }
+.dashboard-grid { display: grid; grid-template-columns: 2fr 1fr; gap: 24px; }
+.quick-actions button { width: 100%; margin-bottom: 8px; text-align: left; }
+.status-badge { padding: 4px 8px; border-radius: 4px; font-size: 12px; }
+.status-badge.pending { background: #fff3e0; }
+.status-badge.processing { background: #e3f2fd; }
+.status-badge.completed { background: #e8f5e9; }

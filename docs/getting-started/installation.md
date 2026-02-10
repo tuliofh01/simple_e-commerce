@@ -2,145 +2,170 @@
 
 ## Prerequisites
 
-Before installing the Simple E-Commerce Platform, ensure you have the following installed:
+### Required Software
+- **DLang Compiler (DMD)**: v2.1xx
+  ```bash
+  # Linux
+  curl -fsS https://dlang.org/install.sh | bash -s
+  source ~/dlang/*/activate
 
-- **Docker** 20.10+ and **Docker Compose** 2.0+
-- **Git** for version control
-- **Node.js** 18+ (for frontend development)
-- **DLang** compiler (dmd) 2.100+ (for backend development)
+  # macOS
+  brew install dmd
 
-## Quick Start (Docker)
+  # Windows
+  # Download from https://dlang.org/download.html
+  ```
 
-The fastest way to get started is using Docker:
+- **Node.js**: v18+
+  ```bash
+  # Linux/macOS
+  curl -fsSL https://deb.nodesource.com/setup_18.x | sudo -E bash -
+  sudo apt-get install -y nodejs
 
+  # macOS
+  brew install node
+  ```
+
+- **Angular CLI**: v17
+  ```bash
+  npm install -g @angular/cli@17
+  ```
+
+- **SQLite3**: v3+
+  ```bash
+  # Linux
+  sudo apt-get install sqlite3
+
+  # macOS
+  brew install sqlite3
+  ```
+
+- **Git**: v2+
+
+---
+
+## Quick Start
+
+### 1. Clone Repository
 ```bash
-# Clone the repository
-git clone https://github.com/tuliofh01/simple_e-commerce.git
-cd simple_e-commerce
-
-# Copy environment template
-cp .env.example .env
-
-# Start all services
-docker-compose -f docker-compose.dev.yml up -d
-
-# Verify services are running
-docker-compose ps
+git clone https://github.com/your-org/simple-ecommerce.git
+cd simple-ecommerce
 ```
 
-## Manual Installation
-
-### Backend Setup
-
+### 2. Setup Backend
 ```bash
-# Navigate to backend directory
 cd backend
 
-# Install D dependencies
+# Install dependencies
 dub fetch
-dub install
+dub upgrade
 
-# Build the application
-dub build --build=release
+# Copy environment file
+cp .env.example .env
 
-# Run the server
-./bin/simple_ecommerce
+# Edit .env with your settings
+nano .env
+
+# Run database migrations
+# (TODO: Add migration command)
+
+# Start development server
+dub run
 ```
 
-### Frontend Setup
+Backend runs at: `http://localhost:8080`
 
+### 3. Setup Frontend
 ```bash
-# Navigate to frontend directory
 cd frontend
 
-# Install Node.js dependencies
+# Install dependencies
 npm install
 
 # Start development server
 npm start
+```
+
+Frontend runs at: `http://localhost:4200`
+
+---
+
+## Development Setup
+
+### Backend (DLang + Vibe-D)
+
+```bash
+cd backend
+
+# Development mode with debug output
+dub run -- --mode development
+
+# Build release
+dub build --build=release
+
+# Run tests
+dub test
+
+# View logs
+tail -f logs/app.log
+```
+
+### Frontend (Angular 17)
+
+```bash
+cd frontend
+
+# Development server with hot reload
+npm start
+
+# Run unit tests
+npm test
+
+# Run e2e tests
+npm run e2e
 
 # Build for production
 npm run build:prod
+
+# Build with specific configuration
+npm run build:prod -- --configuration=production
 ```
 
-## Configuration
+---
 
-### Environment Variables
-
-Create a `.env` file in the backend directory:
-
-```env
-# Server Configuration
-SERVER_PORT=8080
-NODE_ENV=development
-
-# JWT Configuration
-JWT_SECRET=your-super-secret-jwt-key
-
-# Database Configuration
-DB_PATH=data/database.db
-
-# Stripe Configuration
-STRIPE_SECRET_KEY=sk_test_your_key
-STRIPE_PUBLISHABLE_KEY=pk_test_your_key
-
-# Email Configuration
-SMTP_HOST=smtp.gmail.com
-SMTP_PORT=587
-SMTP_USER=your-email@gmail.com
-SMTP_PASSWORD=your-app-password
-
-# Security
-HCAPTCHA_SECRET=your-hcaptcha-secret
-```
-
-## Verification
-
-After installation, verify your setup:
-
-### Backend Health Check
+## Docker Development
 
 ```bash
-curl http://localhost:8080/api/health
+# Start all services
+docker-compose -f docker-compose.dev.yml up -d
+
+# View logs
+docker-compose -f docker-compose.dev.yml logs -f
+
+# Stop services
+docker-compose -f docker-compose.dev.yml down
 ```
 
-Expected response:
-```json
-{
-  "status": "healthy",
-  "timestamp": "2024-02-09T18:00:00Z",
-  "version": "1.0.0"
-}
+---
+
+## Production Deployment
+
+```bash
+# Build Docker images
+./docker-build.sh
+
+# Deploy
+docker-compose -f docker-compose.prod.yml up -d
 ```
 
-### Frontend Access
-
-Open your browser and navigate to:
-- **Development**: http://localhost:4200
-- **Production**: http://localhost
+---
 
 ## Troubleshooting
 
-### Common Issues
+### Backend Issues
+- **Port 8080 in use**: Kill existing process or change port in .env
+- **Database locked**: Ensure no other processes are using the SQLite file
 
-#### Port Already in Use
-```bash
-# Find process using port
-lsof -i :8080
-
-# Kill the process
-kill -9 <PID>
-```
-
-#### Database Issues
-```bash
-# Reset database
-rm -rf backend/data/database.db
-docker-compose restart backend
-```
-
-#### Permission Issues
-```bash
-# Fix permissions
-chmod +x backend/bin/simple_ecommerce
-```
+### Frontend Issues
+- **Node version mismatch**: Use nvm to switch to correct version
+- **Angular CLI not found**: Reinstall with `npm install -g @angular/cli@17`

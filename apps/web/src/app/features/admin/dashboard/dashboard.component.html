@@ -1,0 +1,81 @@
+<div class="dashboard-container">
+  <h1>Admin Dashboard</h1>
+
+  <div class="stats-grid">
+    <mat-card class="stat-card">
+      <mat-card-content>
+        <mat-icon>shopping_cart</mat-icon>
+        <div class="stat-value">{{stats.orders}}</div>
+        <div class="stat-label">Total Orders</div>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card class="stat-card">
+      <mat-card-content>
+        <mat-icon>attach_money</mat-icon>
+        <div class="stat-value">\${{stats.revenue}}</div>
+        <div class="stat-label">Total Revenue</div>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card class="stat-card">
+      <mat-card-content>
+        <mat-icon>inventory_2</mat-icon>
+        <div class="stat-value">{{stats.products}}</div>
+        <div class="stat-label">Products</div>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card class="stat-card">
+      <mat-card-content>
+        <mat-icon>people</mat-icon>
+        <div class="stat-value">{{stats.users}}</div>
+        <div class="stat-label">Users</div>
+      </mat-card-content>
+    </mat-card>
+  </div>
+
+  <div class="dashboard-grid">
+    <mat-card class="recent-orders">
+      <mat-card-header>
+        <mat-card-title>Recent Orders</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <table mat-table [dataSource]="recentOrders">
+          <ng-container matColumnDef="id">
+            <th mat-header-cell *matHeaderCellDef>Order</th>
+            <td mat-cell *matCellDef="let order">#{{order.id}}</td>
+          </ng-container>
+          <ng-container matColumnDef="customer">
+            <th mat-header-cell *matHeaderCellDef>Customer</th>
+            <td mat-cell *matCellDef="let order">{{order.customerName}}</td>
+          </ng-container>
+          <ng-container matColumnDef="total">
+            <th mat-header-cell *matHeaderCellDef>Total</th>
+            <td mat-cell *matCellDef="let order">\${{order.total}}</td>
+          </ng-container>
+          <ng-container matColumnDef="status">
+            <th mat-header-cell *matHeaderCellDef>Status</th>
+            <td mat-cell *matCellDef="let order">
+              <span class="status-badge" [class]="order.status">{{order.status}}</span>
+            </td>
+          </ng-container>
+          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+        </table>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card class="quick-actions">
+      <mat-card-header>
+        <mat-card-title>Quick Actions</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <button mat-stroked-button routerLink="/admin/products">Manage Products</button>
+        <button mat-stroked-button routerLink="/admin/users">Manage Users</button>
+        <button mat-stroked-button routerLink="/admin/orders">View All Orders</button>
+        <button mat-stroked-button routerLink="/blog/create">Create Blog Post</button>
+      </mat-card-content>
+    </mat-card>
+  </div>
+</div>

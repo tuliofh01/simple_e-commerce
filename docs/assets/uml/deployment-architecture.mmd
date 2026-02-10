@@ -1,0 +1,34 @@
+flowchart TD
+    subgraph Development
+        A[Local Dev] --> B[Git Commit]
+        B --> C[Pull Request]
+    end
+    
+    subgraph CI
+        C --> D[GitHub Actions]
+        D --> E[Run Tests]
+        E --> F[Build Backend]
+        F --> G[Build Frontend]
+        G --> H[Security Scan]
+    end
+    
+    subgraph Staging
+        H --> I[Deploy Staging]
+        I --> J[Integration Tests]
+    end
+    
+    subgraph Production
+        J --> K{Approved?}
+        K -->|Yes| L[Deploy Production]
+        K -->|No| M[Rollback]
+        L --> N[Health Check]
+    end
+    
+    subgraph Monitoring
+        N --> O[Logs]
+        N --> P[Metrics]
+        O --> Q[Alerting]
+        P --> Q
+    
+    style L fill:#4caf50
+    style N fill:#4caf50

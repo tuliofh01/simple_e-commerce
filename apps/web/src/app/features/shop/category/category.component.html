@@ -1,0 +1,14 @@
+<div class="category-container">
+  <h1>{{categoryName}}</h1>
+  <p>{{products.length}} products</p>
+  <div class="products-grid">
+    <app-product-card
+      *ngFor="let product of products"
+      [product]="product"
+      (addToCart)="addToCart($event)">
+    </app-product-card>
+  </div>
+  <div *ngIf="products.length === 0" class="no-products">
+    <p>No products found in this category.</p>
+  </div>
+</div>

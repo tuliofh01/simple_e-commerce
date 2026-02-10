@@ -1,0 +1,6 @@
+.create-container { padding: 24px; max-width: 800px; margin: 0 auto; }
+form { display: flex; flex-direction: column; gap: 16px; }
+mat-form-field { width: 100%; }
+textarea[matInput] { font-family: monospace; }
+.form-actions { display: flex; justify-content: space-between; align-items: center; margin-top: 16px; }
+.buttons { display: flex; gap: 8px; }

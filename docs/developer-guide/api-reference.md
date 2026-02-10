@@ -1,120 +1,111 @@
 # API Reference
 
-## Base URL
-
-**Development**: `http://localhost:8080/api`
-**Production**: `https://yourdomain.com/api`
-
 ## Authentication
 
-All protected endpoints require a JWT token in the Authorization header:
+### POST /api/auth/register
+Register a new user account.
 
-```
-Authorization: Bearer <your-jwt-token>
-```
-
-## Endpoints
-
-### Authentication
-
-#### POST /auth/register
-Register a new user.
-
-**Request Body:**
+**Request:**
 ```json
 {
-  "username": "string",
-  "email": "string",
-  "password": "string",
-  "role": "user" // optional, default: "user"
+  "name": "John Doe",
+  "email": "john@example.com",
+  "password": "securepassword123"
 }
 ```
 
-**Response:**
+**Response:** 201 Created
 ```json
 {
-  "token": "jwt-token",
   "user": {
     "id": 1,
-    "username": "string",
-    "email": "string",
-    "role": "user"
+    "name": "John Doe",
+    "email": "john@example.com",
+    "role": "customer"
   },
-  "expiresAt": "2024-02-10T18:00:00Z"
+  "accessToken": "eyJhbG...",
+  "refreshToken": "eyJhbG..."
 }
 ```
 
-#### POST /auth/login
-Login with username and password.
+### POST /api/auth/login
+Authenticate user and get tokens.
 
-**Request Body:**
+**Request:**
 ```json
 {
-  "username": "string",
-  "password": "string"
+  "email": "john@example.com",
+  "password": "securepassword123"
 }
 ```
 
-#### POST /auth/refresh
-Refresh JWT token.
+### POST /api/auth/refresh
+Refresh access token using refresh token.
 
-**Headers:**
-```
-Authorization: Bearer <your-jwt-token>
-```
-
-### Products
-
-#### GET /products
-Get all products with optional filtering.
-
-**Query Parameters:**
-- `category` - Filter by category
-- `search` - Search in name and description
-- `sort` - Sort field (default: created_at)
-- `order` - Sort order (asc/desc)
-- `page` - Page number (default: 1)
-- `limit` - Items per page (default: 20)
-
-#### GET /products/:id
-Get single product by ID.
-
-#### GET /products/featured
-Get featured products.
-
-#### GET /products/search
-Search products.
-
-**Query Parameters:**
-- `q` - Search query (required)
-- `limit` - Max results (default: 20)
-
-#### POST /products
-Create new product (requires moderator+ role).
-
-#### PUT /products/:id
-Update product (requires moderator+ role).
-
-#### DELETE /products/:id
-Delete product (requires admin role).
-
-## Error Response
-
-All endpoints return errors in the following format:
-
+**Request:**
 ```json
 {
-  "error": "Error message",
-  "timestamp": "2024-02-09T18:00:00Z"
+  "refreshToken": "eyJhbG..."
 }
 ```
 
-**Common Status Codes:**
-- `200` - Success
-- `201` - Created
-- `400` - Bad Request
-- `401` - Unauthorized
-- `403` - Forbidden
-- `404` - Not Found
-- `429` - Too Many Requests
-- `500` - Internal Server Error
+### GET /api/auth/profile
+Get current user profile. Requires authentication.
+
+---
+
+## Products
+
+### GET /api/products
+List all products with pagination.
+
+**Query Parameters:**
+- `page` (default: 1)
+- `limit` (default: 12)
+- `category` (optional)
+- `sort` (name, price_asc, price_desc, newest)
+- `search` (optional)
+
+### GET /api/products/:id
+Get single product details.
+
+### POST /api/products
+Create product (admin only).
+
+### PUT /api/products/:id
+Update product (admin only).
+
+### DELETE /api/products/:id
+Delete product (admin only).
+
+---
+
+## Orders
+
+### POST /api/orders
+Create new order from cart.
+
+### GET /api/orders
+List user's orders.
+
+### GET /api/orders/:id
+Get order details.
+
+### PUT /api/orders/:id/status
+Update order status (admin only).
+
+---
+
+## Blog
+
+### GET /api/blog/posts
+List published posts.
+
+### GET /api/blog/posts/:id
+Get single post with comments.
+
+### POST /api/blog/posts
+Create post.
+
+### DELETE /api/blog/posts/:id
+Delete post.
