@@ -7,6 +7,7 @@ import controllers.blog_controller;
 import controllers.order_controller;
 import middleware.cors_middleware;
 import middleware.auth_middleware;
+import middleware.license_middleware; // Import License Middleware
 import crypto.jwt_handler;
 import config.app_config;
 import std.stdio;
@@ -22,7 +23,16 @@ void main() {
     try {
         // Load configuration
         auto config = ConfigManager.load();
-        
+
+        // Initialize License Middleware and Check Hardware Lock
+        auto licenseMiddleware = new LicenseMiddleware();
+        if (!licenseMiddleware.isLicenseValid()) {
+            writeln("❌ FATAL: Invalid or missing license key.");
+            writeln("ℹ️  HINT: Run 'dub run tools:checkpoint -- --generate' to generate a valid key.");
+            writeln("🛑 Server cannot start without a valid license.");
+            return; // Halt startup
+        }
+
         // Validate configuration
         if (!ConfigManager.validateConfig(config)) {
             writeln("❌ Invalid configuration. Please check your .env file.");
@@ -94,8 +104,9 @@ void main() {
         router.get("/api/products/slug/:slug", &productController.getProductBySlug);
         router.get("/api/products/:id", &productController.getProduct);
         
-        // Protected product routes (require authentication)
+        // Protected product routes (require authentication AND license)
         router.post("/api/products", (HTTPServerRequest req, HTTPServerResponse res) {
+            licenseMiddleware.requireLicense(req, res); // Check License First
             if (authMiddleware.requireModerator(req, res)) {
                 productController.createProduct(req, res);
             }

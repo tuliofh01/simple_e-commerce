@@ -4,6 +4,7 @@ import vibe.d;
 import models.product;
 import templates.db_templates;
 import database.db_connection;
+import utils.sql_sanitizer; // Import sanitizer
 import std.typecons;
 
 /**
@@ -25,38 +26,39 @@ class ProductController {
      */
     void getProducts(HTTPServerRequest req, HTTPServerResponse res) {
         try {
-            // Parse query parameters
-            string category = req.query.get("category", "");
-            string search = req.query.get("search", "");
-            string sortBy = req.query.get("sort", "created_at");
-            string sortOrder = req.query.get("order", "desc");
+            // Parse and SANITIZE query parameters to prevent SQL Injection
+            string category = sanitizeCategory(req.query.get("category", ""));
+            string search = sanitizeString(req.query.get("search", ""));
+            string sortBy = sanitizeSortField(req.query.get("sort", "created_at"));
+            string sortOrder = req.query.get("order", "desc").strip().toLower() == "asc" ? "ASC" : "DESC";
             uint page = req.query.get("page", "1").to!uint;
             uint limit = req.query.get("limit", "20").to!uint;
-            
-            // Build where clause
+
+            // Build where clause using sanitized inputs
             string whereClause = "";
             if (!category.empty) {
-                whereClause = "category = '" ~ category ~ "'";
+                whereClause ~= "category = '" ~ category ~ "'";
             }
-            
+
             if (!search.empty) {
                 if (!whereClause.empty) whereClause ~= " AND ";
-                whereClause ~= "name LIKE '%" ~ search ~ "%' OR description LIKE '%" ~ search ~ "%'";
+                // Using parameterized-like safety: strictly limiting wildcards
+                whereClause ~= "(name LIKE '%" ~ search ~ "%' OR description LIKE '%" ~ search ~ "%')";
             }
-            
+
             // Build order clause
             string orderClause = sortBy ~ " " ~ sortOrder;
-            
+
             // Calculate offset
             uint offset = (page - 1) * limit;
-            
+
             // Get products
             auto products = productRepo.findAll(whereClause, orderClause, limit);
-            
+
             // Get total count for pagination
             auto totalCount = getTotalCount(whereClause);
-            
-            // Build response
+
+            // Build response (Ensuring keys match frontend expectation)
             auto response = [
                 "products": products,
                 "pagination": [
@@ -66,10 +68,10 @@ class ProductController {
                     "totalPages": (totalCount + limit - 1) / limit
                 ]
             ].toJSON();
-            
+
             res.headers["Content-Type"] = "application/json";
             res.writeBody(response.toString());
-            
+
         } catch (Exception e) {
             sendError(res, "Failed to fetch products: " ~ e.msg, 500);
         }
@@ -235,58 +237,64 @@ class ProductController {
      */
     void getProductsByCategory(HTTPServerRequest req, HTTPServerResponse res) {
         try {
-            auto category = req.params["category"];
+            // SANITIZE category input
+            auto category = sanitizeCategory(req.params["category"]);
             uint limit = req.query.get("limit", "20").to!uint;
-            
+
             auto products = productRepo.findAll(
-                "category = '" ~ category ~ "'", 
-                "name ASC", 
+                "category = '" ~ category ~ "'",
+                "name ASC",
                 limit
             );
-            
+
             auto response = [
                 "category": category,
                 "products": products,
-                "count": products.length
+                "pagination": [
+                    "total": products.length
+                ]
             ].toJSON();
-            
+
             res.headers["Content-Type"] = "application/json";
             res.writeBody(response.toString());
-            
+
         } catch (Exception e) {
             sendError(res, "Failed to fetch products by category: " ~ e.msg, 500);
         }
     }
-    
+
     /**
      * Search products
      * GET /api/products/search
      */
     void searchProducts(HTTPServerRequest req, HTTPServerResponse res) {
         try {
-            string query = req.query.get("q", "");
+            // SANITIZE search query
+            string query = sanitizeString(req.query.get("q", ""));
             uint limit = req.query.get("limit", "20").to!uint;
-            
+
             if (query.empty) {
                 sendError(res, "Search query is required", 400);
                 return;
             }
-            
+
             auto products = productRepo.findAll(
-                "name LIKE '%" ~ query ~ "%' OR description LIKE '%" ~ query ~ "%'", 
-                "name ASC", 
+                "name LIKE '%" ~ query ~ "%' OR description LIKE '%" ~ query ~ "%'",
+                "name ASC",
                 limit
             );
-            
+
             auto response = [
                 "query": query,
                 "products": products,
-                "count": products.length
+                "pagination": [
+                    "total": products.length
+                ]
             ].toJSON();
-            
+
             res.headers["Content-Type"] = "application/json";
             res.writeBody(response.toString());
-            
+
         } catch (Exception e) {
             sendError(res, "Failed to search products: " ~ e.msg, 500);
         }
